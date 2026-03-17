@@ -64,12 +64,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError('Route not for pass this.updateMe', 400));
   }
   //2. Update user doc
-  console.log(req.body);
-  console.log(req.file);
-  console.log('--------- useris -------');
   const filteredBody = filterObj(req.body, 'name', 'email');
   if (req.file) filteredBody.photo = req.file.filename;
-  console.log(filteredBody);
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidator: true,

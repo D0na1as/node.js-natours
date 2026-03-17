@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const hpp = require('hpp');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHndler = require('./controllers/errorController');
@@ -60,10 +61,10 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log('--- Hederis ----');
-  console.log(req.headers);
-  next();
+ next();
 });
+
+app.use(compression());
 
 //Route's
 app.use('/api/v1/tours', tourRouter);

@@ -87,17 +87,11 @@ reviewSchema.post('save', function () {
 
 reviewSchema.pre(/^findOneAnd/, async function () {
   this.r = await this.clone().findOne();
-
-  console.log('---- findOneAnd ----');
-  console.log(this.r);
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {
   //dont owrk here, query executed
   await this.r.constructor.calcAverageRatings(this.r.tour);
-
-  console.log('---- findOneAnd ----');
-  console.log(this.r);
 });
 
 const Review = mongoose.model('Review', reviewSchema);

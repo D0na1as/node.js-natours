@@ -47,8 +47,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
   const url = `${req.protocol}://${req.get('host')}/me`;
-  console.log('------ adresas -----');
-  console.log(url);
   await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
 });
@@ -122,12 +120,9 @@ exports.restrictTo =
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //1. Ger user on posted emil
   const user = await User.findOne({ email: req.body.email });
-  console.log('---- 2 ----');
   if (!user) {
-    console.log('---- 3 ----');
     return next(new AppError('No user found with this email', 404));
   }
-  console.log('---- 4 ----');
   //2. Generte rndom token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
@@ -146,14 +141,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     await new Email(user, resetUrl).sendPasswordReset();
 
-    console.log('-------- 2 ------');
     res.status(200).json({
       status: 'succes',
       message: 'Token sent to email',
     });
-    console.log('-------- 3 ------');
   } catch (err) {
-    console.log('-------- 4 ------');
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
@@ -200,9 +192,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.updatePassword = catchAsync(async (req, res, next) => {
   //1. Get user
   const user = await User.findById(req.user.id).select('+password');
-  console.log('------ 2 -----');
-  console.log(req.body);
-  console.log(req.body.passwordCurrent);
 
   //2. Check if posted password is correct
   if (
@@ -210,14 +199,10 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   ) {
     return next(new AppError('Current password is wrong', 401));
   }
-  console.log('------ 3 -----');
   //3. If so update pssword
   user.password = req.body.password;
-  console.log('------ 2 -----');
   user.passwordConfirm = req.body.passwordConfirm;
-  console.log('------ 4 -----');
   await user.save();
-  console.log('------ 5 -----');
   //4. Login user, send jwt
   createSendToken(user, 200, res);
 });

@@ -8,10 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 1. Curently booked tour
-
-  console.log('--- params ar ---');
-  console.log(req.params.tourId);
-  const tour = await Tour.findById(req.params.tourId);
+const tour = await Tour.findById(req.params.tourId);
 
   // 2. Checkout seasion
   const session = await stripe.checkout.sessions.create({
